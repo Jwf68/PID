@@ -10,7 +10,7 @@ Scaler is used to scale raw values to engineering units.
 
 Typical usage:
 ```
-// one time initiation 
+// one time call or parameter change 
 			_PIDparameters.proportionalGain = 0.2f;
 			_PIDparameters.integrationTimeSecond = 0.2f;
 			_PIDparameters.derivateTimeSecond = 0.0f;
