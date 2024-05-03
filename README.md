@@ -20,7 +20,7 @@ Typical usage:
 			_PIDparameters.sampleTimeSecond = 0.1f;
 			_PIDcontroller.SetParameters(_PIDparameters);
 			_changeRateLimiter.SetSampleTime(0.1f);
- 
+
 // continus call
 			_speedSetPointHz = 40;
 			_changeRateLimiter.SetMaxChangeRatePerSecond(4.0f);
