@@ -9,6 +9,7 @@ PIDparameters parameters for the PID controller.
 Scaler is used to scale raw values to engineering units.
 
 Typical usage:
+```
 // one time initiation 
 			_PIDparameters.proportionalGain = 0.2f;
 			_PIDparameters.integrationTimeSecond = 0.2f;
@@ -27,3 +28,4 @@ Typical usage:
 			float limitedSetPoint = _changeRateLimiter.LimitChangeRate(_speedSetPointHz);
 			float limitedSpeedActualValueHz = LimitSignal(_speedActualValueHz, 0, 80);
 			float controlSignal = _PIDcontroller.Compute(limitedSetPoint, limitedSpeedActualValueHz, 0.f, _settings.MaxPowerLimitControlSignal);
+```
