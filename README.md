@@ -26,6 +26,5 @@ Typical usage:
 			_speedSetPointHz = 40;
 			_changeRateLimiter.SetMaxChangeRatePerSecond(4.0f);
 			float limitedSetPoint = _changeRateLimiter.LimitChangeRate(_speedSetPointHz);
-			float limitedSpeedActualValueHz = LimitSignal(_speedActualValueHz, 0, 80);
-			float controlSignal = _PIDcontroller.Compute(limitedSetPoint, limitedSpeedActualValueHz, 0.f, _settings.MaxPowerLimitControlSignal);
+			float controlSignal = _PIDcontroller.Compute(limitedSetPoint, _speedActualValueHz, 0.f, _settings.MaxPowerLimitControlSignal);
 ```
