@@ -3,7 +3,7 @@
 #ifndef CHANGERATELIMITER_H
 #define CHANGERATELIMITER_H
 
-#include <bits/std_abs.h>
+#include <stdlib.h>
 
 /* Limits the rate of change of a float number.
 */
