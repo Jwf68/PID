@@ -9,7 +9,9 @@ while (true) {
     P = K * e 
 
     // Step 4: Compute the derivative part
-    D = K * Td * (e - eold) / h 
+    // Derivation of the actual value not the error. To avoid the D part reacting when the setpoint changes.
+    // Filter is missing    
+    D = K * Td * (y - yold) / h 
 
     // Step 5: Update and limit the integral term
     I = I + (K * h / Ti) * e
@@ -24,8 +26,8 @@ while (true) {
     // Step 8: Set the manipulated variable
     setManipulatedVariable(u) 
 
-    // Step 9: Update the previous error
-    eold = e 
+    // Step 9: Update the previous y
+    yold = y  
 
     // Step 10: Wait for the sampling time
     wait(h) 
