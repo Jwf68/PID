@@ -1,0 +1,32 @@
+while (true) {
+    // Step 1: Read the process variable
+    y = getProcessVariable() 
+
+    // Step 2: Compute the error
+    e = ysp - y 
+
+    // Step 3: Compute the proportional part
+    P = K * e 
+
+    // Step 4: Compute the derivative part
+    D = K * Td * (e - eold) / h 
+
+    // Step 5: Update and limit the integral term
+    I = I + (K * h / Ti) * e
+    I = saturateOutput(I, uLow, uHigh) 
+
+    // Step 6: Compute the nominal output
+    v = P + I + D 
+
+    // Step 7: Saturate the output
+    u = saturateOutput(v, uLow, uHigh) 
+
+    // Step 8: Set the manipulated variable
+    setManipulatedVariable(u) 
+
+    // Step 9: Update the previous error
+    eold = e 
+
+    // Step 10: Wait for the sampling time
+    wait(h) 
+}
