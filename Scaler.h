@@ -8,8 +8,8 @@
 class Scaler
 {
 public:
-	float FloatScale(float minRaw, float maxRaw, float minEU, float maxEU, float rawValue);
-
+	float RawToEngineering(float minRaw, float maxRaw, float minEu, float maxEu, float rawValue);
+	float EngineeringToRaw(float minRaw, float maxRaw, float minEu, float maxEu, float euValue);
 private:
 
 };
