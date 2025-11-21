@@ -4,7 +4,7 @@ namespace company
 {
 	namespace product
 	{
-		void PidController::SetParameters(PidParameters p)
+		void PidController::SetParameters(PidParameters p, PidParameters oldP)
 		{
 			// calculate parameters only when settings are changed
 			p1 = p.proportionalGain * p.setpointWeightingFactor; // set-point gain
@@ -15,17 +15,12 @@ namespace company
 			p5 = p.proportionalGain * p.sampleTimeSecond / p.integrationTimeSecond; // integral gain
 			p6 = p.sampleTimeSecond / p.trackingTimeConstantSecond; // anti-windup gain
 			// Bumpless parameter changes
-			this->integralPart = this->integralPart + this->oldProportionalGain * (this->oldSetpointWeightingFactor * this->setPoint - this->actualValue) -
-				p.proportionalGain * (p.setpointWeightingFactor * this->setPoint - this->actualValue);
-			this->oldProportionalGain = p.proportionalGain;
-			this->oldSetpointWeightingFactor = p.setpointWeightingFactor;
+			this->integralPart = this->integralPart + oldP.proportionalGain * (oldP.setpointWeightingFactor * p.setPoint - p.actualValue) -
+				p.proportionalGain * (p.setpointWeightingFactor * p.setPoint - p.actualValue);
 		}
 
 		float PidController::Compute(float setPoint, float actualValue, float lowerLimitControlSignal, float upperLimitControlSignal)
 		{
-			this->setPoint = setPoint;
-			this->actualValue = actualValue;
-
 			float controlSignal = p1 * setPoint - p2 * actualValue + this->x + this->integralPart; // compute nominal output
 			float controlSignalLimited = SaturateControlSignal(controlSignal, lowerLimitControlSignal, upperLimitControlSignal); // saturate output
 			this->x = p3 * this->x + p4 * actualValue; // part of D-part & filter
@@ -57,4 +52,5 @@ namespace company
 			return controlSignal;
 		}
 	}
+
 }
