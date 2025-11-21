@@ -42,7 +42,9 @@ namespace company
 			float _setPoint;
 			float _actualValue;
 			float _controlSignal;
+			bool _firstTime;
 		};
 	}
 }
 #endif
+
