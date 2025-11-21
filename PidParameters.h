@@ -92,8 +92,12 @@ namespace company
 			*/
 			float sampleTimeSecond;
 
+			float setPoint;
+			float actualValue;
+
 			bool equal(const PidParameters* other) const;
 		};
 	}
 }
+
 #endif
