@@ -6,7 +6,8 @@ namespace company
 	{
 		PidHandler::PidHandler() :
 			_hysteresis(0.f),
-			_controlSignal(0.f)
+			_controlSignal(0.f),
+			_firstTime(true)
 		{
 		}
 
@@ -23,7 +24,8 @@ namespace company
 			uint8_t functionAut2 = _leafStore->GetLeafValue<uint8_t>(MPX::FAUT2);
 			uint8_t functionAut3 = _leafStore->GetLeafValue<uint8_t>(MPX::FAUT3);
 
-			if (functionAut1 != AUTF_PID2_CONTROLLER && functionAut2 != AUTF_PID2_CONTROLLER && functionAut3 != AUTF_PID2_CONTROLLER)
+			if (functionAut1 != AUTF_PID2_CONTROLLER_COOLING && functionAut2 != AUTF_PID2_CONTROLLER_COOLING && functionAut3 != AUTF_PID2_CONTROLLER_COOLING
+				&& functionAut1 != AUTF_PID2_CONTROLLER_HEATING && functionAut2 != AUTF_PID2_CONTROLLER_HEATING && functionAut3 != AUTF_PID2_CONTROLLER_HEATING)
 			{
 				// bail if controller is not configured
 				return;
@@ -46,35 +48,51 @@ namespace company
 			uint8_t functionAut2 = _leafStore->GetLeafValue<uint8_t>(MPX::FAUT2);
 			uint8_t functionAut3 = _leafStore->GetLeafValue<uint8_t>(MPX::FAUT3);
 
-			if (functionAut1 == AUTF_PID2_CONTROLLER)
+			if (functionAut1 == AUTF_PID2_CONTROLLER_COOLING || functionAut1 == AUTF_PID2_CONTROLLER_HEATING)
 			{
 				_lowerLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P1AUT1);
 				_upperLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P2AUT1);
 			}
-			else if (functionAut2 == AUTF_PID2_CONTROLLER)
+			else if (functionAut2 == AUTF_PID2_CONTROLLER_COOLING || functionAut2 == AUTF_PID2_CONTROLLER_HEATING)
 			{
 				_lowerLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P1AUT2);
 				_upperLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P2AUT2);
 			}
-			else if (functionAut3 == AUTF_PID2_CONTROLLER)
+			else if (functionAut3 == AUTF_PID2_CONTROLLER_COOLING || functionAut3 == AUTF_PID2_CONTROLLER_HEATING)
 			{
 				_lowerLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P1AUT3);
 				_upperLimitControlSignal = this->_leafStore->GetLeafValue<float>(MPX::P2AUT3);
 			}
+			
+			if (functionAut1 == AUTF_PID2_CONTROLLER_COOLING || functionAut2 == AUTF_PID2_CONTROLLER_COOLING
+				|| functionAut3 == AUTF_PID2_CONTROLLER_COOLING)
+			{
+				_NewPIDparameters.proportionalGain = this->_leafStore->GetLeafValue<float>(MPX::PID2_P) * -1;
+			}
+			else
+			{
+				_NewPIDparameters.proportionalGain = this->_leafStore->GetLeafValue<float>(MPX::PID2_P);
+			}
 
-			_NewPIDparameters.proportionalGain = this->_leafStore->GetLeafValue<float>(MPX::PID2_P);
 			_NewPIDparameters.integrationTimeSecond = this->_leafStore->GetLeafValue<float>(MPX::PID2_I);
 			_NewPIDparameters.derivateTimeSecond = 0.f;
 
 			_NewPIDparameters.trackingTimeConstantSecond = 0.5f * _NewPIDparameters.integrationTimeSecond;
 			_NewPIDparameters.derivateFilterTimeConstantSecond = _NewPIDparameters.derivateTimeSecond / 10.0f;
-			_NewPIDparameters.setpointWeightingFactor = 0.5f;				
+			_NewPIDparameters.setpointWeightingFactor = 1.f;				
 			_NewPIDparameters.sampleTimeSecond = 1.0f;
 			_NewPIDparameters.filterTimeConstantSecond = 1.f / ((1.f / _NewPIDparameters.sampleTimeSecond) / 2.f);
+			_NewPIDparameters.setPoint = _setPoint;
+			_NewPIDparameters.actualValue = _actualValue;
 
-			if (!_NewPIDparameters.equal(&_OldPIDparameters))
+			if (!_NewPIDparameters.equal(&_OldPIDparameters) || _firstTime)
 			{
-				_PIDcontroller.SetParameters(_NewPIDparameters);
+				if (_firstTime)
+				{
+					_OldPIDparameters = _NewPIDparameters;
+					_firstTime = false;
+				}
+				_PIDcontroller.SetParameters(_NewPIDparameters, _OldPIDparameters);
 				_OldPIDparameters = _NewPIDparameters;
 			}
 		}
@@ -91,3 +109,4 @@ namespace company
 		}
 	}
 }
+
