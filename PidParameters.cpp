@@ -12,7 +12,9 @@ namespace company
 			filterTimeConstantSecond(0.f),
 			derivateFilterTimeConstantSecond(0.f),
 			setpointWeightingFactor(0.f),
-			sampleTimeSecond(0.f)
+			sampleTimeSecond(0.f),
+			setPoint(0.f),
+			actualValue(0.f)
 		{
 		}
 
@@ -25,7 +27,9 @@ namespace company
 				filterTimeConstantSecond == other->filterTimeConstantSecond &&
 				derivateFilterTimeConstantSecond == other->derivateFilterTimeConstantSecond &&
 				setpointWeightingFactor == other->setpointWeightingFactor &&
-				sampleTimeSecond == other->sampleTimeSecond;
+				sampleTimeSecond == other->sampleTimeSecond &&
+				setPoint == other->setPoint;
 		}
 	}
+
 }
